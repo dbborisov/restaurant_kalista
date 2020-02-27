@@ -44,5 +44,10 @@ public class MenuController {
         return modelAndView;
     }
 
+    @GetMapping("/menu/edit")
+    public ModelAndView getEditMenuView(){
+        ModelAndView modelAndView = new ModelAndView("menu_edit");
+        return modelAndView;
+    }
 
 }

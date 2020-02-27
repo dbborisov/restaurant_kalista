@@ -2,7 +2,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <head>
-    <title>Добави в менюто</title>
+
+    <title>Редактиране на менюто</title>
     <th:block th:include="fragments/header"/>
 </head>
 
@@ -28,7 +29,8 @@
             </div>
         </div>
 
-    </div>
+
+
 
     <!-- /.container -->
     <th:block th:include="fragments/footer"/>
@@ -43,8 +45,6 @@
         let uniqueCategories = [];
 
         function getAll() {
-            let selected = document.querySelector("#card_view");
-            // let valSelected = selected.options[selected.selectedIndex].value;
             const url = window.location.host;
             let temp = [];
 
@@ -53,9 +53,6 @@
                 let result = data;
 
                 for (let i = 0; i < result.length; i++) {
-                    console.log(result[i]);
-
-
                     menu.push(result[i]);
                     printCard(result[i],result[i].categoryName);
                 }
@@ -77,7 +74,7 @@
                 let result = data;
 
                 for (let i = 0; i < result.length; i++) {
-                    console.log(result[i].categoryName);
+
                     temp.push(result[i].categoryName);
 
                 }
@@ -89,9 +86,10 @@
 
         function printCard(result,name) {
 
-            console.log(result.details)
             for (let i = 0; i < result.details.length; i++) {
+                console.log(name)
 
+                let idToUse = result.details[i].detailName.split(" ").join("")
 
                 let card = '<div class="card " id="' + result.categoryName.split(" ").join("_") + '" style="width: 12rem;">\n' +
                     '  <img class="card-img-top" src="/img/tuna.jpg" alt="Card image cap">\n' +
@@ -105,14 +103,53 @@
                     // '    <p class="card-text">Цена: ' + result.details[0].price + '</p>\n' +
                     // '    <p class="card-text">Цена: ' + result.details[0].allergens.join(",") + '</p>\n' +
                     '  </div>\n' +
-                    '  <ul class="list-group list-group-flush">\n' +
-                    '    <li class="list-group-item">Cras justo odio</li>\n' +
-                    '    <li class="list-group-item">Dapibus ac facilisis in</li>\n' +
-                    '    <li class="list-group-item">Vestibulum at eros</li>\n' +
-                    '  </ul>\n' +
+                        '<b>'+
                     '  <div class="card-body">\n' +
-                    '    <a href="#" class="card-link">Card link</a>\n' +
-                    '    <a href="#" class="card-link">Another link</a>\n' +
+
+                    '    <a href="#" class="card-link"  class="btn btn-secondary" data-toggle="modal"  data-target="#pop_'+idToUse+'"  data-placement="left" title="Редактирай всички данни">Редактирай</a>   \n' +
+
+
+                        '<!-- Modal -->\n' +
+                    '<div class="modal fade" id="pop_'+idToUse+'" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">\n' +
+                    '  <div class="modal-dialog modal-dialog-centered" role="document">\n' +
+                    '    <div class="modal-content">\n' +
+                    '      <div class="modal-header">\n' +
+                    '        <h5 class="modal-title" id="'+idToUse+'LongTitle">Промяна на продукт от категория '+name+'</h5>\n' +
+                    '        <button type="button" class="close" data-dismiss="modal" aria-label="Close">\n' +
+                    '          <span aria-hidden="true">&times;</span>\n' +
+                    '        </button>\n' +
+                    '      </div>\n' +
+
+
+                    '      <div class="modal-body">\n' +
+                    '        ...\n' +
+                    '      </div>\n' +
+
+
+
+                    '      <div class="modal-footer">\n' +
+                    // '        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>\n' +
+
+
+
+                    '        <label for="up_'+ idToUse +'" class="btn btn-primary" >Избери Снимка</label>\n' +
+                    '        <input id="up_'+idToUse+'" class="btn btn-primary" type="file" name="file" style="display: none" class="file-input" required />\n' +
+                    '        <button  class="btn btn-primary " onclick=" uploadFile(document.querySelector(\'#up_'+idToUse+'\').files[0])" >Добави</button>\n' +
+
+                            // todo add response on xrf status
+                    '       <div class="upload-response">\n' +
+                    '                        <div id="singleFileUploadError"></div>\n' +
+                    '                        <div id="singleFileUploadSuccess"></div>\n' +
+                    '                    </div>' +
+
+
+                    '    </div>\n' +
+                    '      </div>\n' +
+                    '    </div>\n' +
+                    '  </div>\n' +
+                    '</div>'+
+
+
                     '  </div>\n' +
                     '</div>';
 
@@ -154,7 +191,48 @@
 
 
         getMenuGroups();
+
     </script>
+
+        <script >
+            function uploadFile(file) {
+                var formData = new FormData();
+                formData.append("file", file);
+
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", "/uploadFile");
+
+                xhr.onload = function() {
+                    console.log(xhr.responseText);
+                    var response = JSON.parse(xhr.responseText);
+                    if(xhr.status == 200) {
+                        console.log('yes');
+                        // singleFileUploadError.style.display = "none";
+                        // singleFileUploadSuccess.innerHTML = "<p>File Uploaded Successfully.</p><p>DownloadUrl : <a href='" + response.fileDownloadUri + "' target='_blank'>" + response.fileDownloadUri + "</a></p>";
+                        // singleFileUploadSuccess.style.display = "block";
+                    } else {
+                        console.log("no");
+                        // singleFileUploadSuccess.style.display = "none";
+                        // singleFileUploadError.innerHTML = (response && response.message) || "Some Error Occurred";
+                    }
+                }
+
+                xhr.send(formData);
+            }
+
+
+            // singleUploadForm.addEventListener('submit', function(event){
+            //     var files = singleFileUploadInput.files;
+            //     if(files.length === 0) {
+            //         singleFileUploadError.innerHTML = "Please select a file";
+            //         singleFileUploadError.style.display = "block";
+            //     }
+            //     uploadSingleFile(files[0]);
+            //     event.preventDefault();
+            // }, true);
+        </script>
+
+<!--        <script src="/js/main.js" ></script>-->
 </div>
 </body>
 </html>

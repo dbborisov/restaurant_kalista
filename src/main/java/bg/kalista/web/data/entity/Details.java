@@ -30,6 +30,9 @@ public class Details extends BaseEntity implements Serializable {
     @Column(name = "small_grams")
     private double smallGrams;
 
+    @Column(name = "picture")
+    private String picture;
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "product_id", referencedColumnName = "id")
     private Product product;

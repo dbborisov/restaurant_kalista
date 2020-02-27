@@ -16,10 +16,12 @@ public class DetailsModel implements Serializable {
 
     private String detailName;
 
+    private String picture;
 
     private double price;
     private double grams;
     private double smallPrice;
     private double smallGrams;
+
 //    private ProductModel product;
 }
