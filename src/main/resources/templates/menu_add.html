@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <title>Добави в менюто</title>
+ <th:block th:include="fragments/header"/>
+</head>
+
+<body>
+<th:block th:include="fragments/nav"/>
+<div class="container">
+
+
+    <h1>Form</h1>
+    <form action="#" th:action="@{/menu/add}" method="post">
+        <p>Категория: <input type="text" name="categoryName"/></p>
+        <p>Име на родукта: <input type="text" name="productName"/></p>
+        <p>Под Категория: <input type="text" name="groupName"/></p>
+
+        <p>Грамаж: <input type="text" name="grams" size="5"/></p>
+        <p>Цена: <input type="number" name="price" size="5" step="0.01"/></p>
+        <p>Грамаж малка: <input type="text" name="smallGrams" value="0"  size="5" /></p>
+        <p>Цена малка: <input type="number" name="smallPrice" value="0" size="5" step="0.01"/></p>
+        <p>Алергени : <input type="text" name="allergens" /></p>
+        <p><input type="submit" value="Submit"/> <input type="reset" value="Reset"/></p>
+    </form>
+    <noscript>
+        <h2>Sorry! Your browser doesn't support Javascript</h2>
+    </noscript>
+    <div class="upload-container">
+        <div class="upload-header">
+            <h2>Spring Boot File Upload / Download Rest API Example</h2>
+        </div>
+        <div class="upload-content">
+            <div class="single-upload">
+                <h3>Upload Single File</h3>
+                <form id="singleUploadForm" name="singleUploadForm">
+                    <input id="singleFileUploadInput" type="file" name="file" class="file-input" required />
+                    <button type="submit" class="primary submit-btn">Submit</button>
+                </form>
+                <div class="upload-response">
+                    <div id="singleFileUploadError"></div>
+                    <div id="singleFileUploadSuccess"></div>
+                </div>
+            </div>
+            <div class="multiple-upload">
+                <h3>Upload Multiple Files</h3>
+                <form id="multipleUploadForm" name="multipleUploadForm">
+                    <input id="multipleFileUploadInput" type="file" name="files" class="file-input" multiple required />
+                    <button type="submit" class="primary submit-btn">Submit</button>
+                </form>
+                <div class="upload-response">
+                    <div id="multipleFileUploadError"></div>
+                    <div id="multipleFileUploadSuccess"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/js/main.js" ></script>
+
+    <!-- /.container -->
+    <th:block th:include="fragments/footer"/>
+</div>
+</body>
+</html>
