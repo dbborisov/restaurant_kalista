@@ -1,5 +1,6 @@
-package bg.kalista.web.data.entity;
+package bg.kalista.web.data.entity.menu;
 
+import bg.kalista.web.data.entity.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
 

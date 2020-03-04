@@ -39,6 +39,8 @@ public class FileStorageService {
         // Normalize file name
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
 
+        ClassLoader classLoader = getClass().getClassLoader();
+
         try {
             // Check if the file's name contains invalid characters
             if(fileName.contains("..")) {
@@ -47,6 +49,7 @@ public class FileStorageService {
 
             // Copy file to the target location (Replacing existing file with the same name)
             Path targetLocation = this.fileStorageLocation.resolve(fileName);
+
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
             return fileName;

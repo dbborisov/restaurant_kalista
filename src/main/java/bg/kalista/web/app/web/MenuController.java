@@ -26,27 +26,27 @@ public class MenuController {
 
     @GetMapping("/menu/add")
     public ModelAndView getMenuAdd(){
-        ModelAndView modelAndView = new ModelAndView("menu_add");
+        ModelAndView modelAndView = new ModelAndView("menu/menu_add");
         return modelAndView;
     }
 
     @PostMapping("/menu/add")
     public ModelAndView getMenu(@ModelAttribute MenuModel menuModel){
         this.productService.save(menuModel);
-        ModelAndView modelAndView = new ModelAndView("menu_add");
+        ModelAndView modelAndView = new ModelAndView("menu/menu_add");
         return modelAndView;
     }
 
 
     @GetMapping("/menu/view")
     public ModelAndView getMenuView(){
-        ModelAndView modelAndView = new ModelAndView("menu_view");
+        ModelAndView modelAndView = new ModelAndView("menu/menu_view");
         return modelAndView;
     }
 
     @GetMapping("/menu/edit")
     public ModelAndView getEditMenuView(){
-        ModelAndView modelAndView = new ModelAndView("menu_edit");
+        ModelAndView modelAndView = new ModelAndView("menu/menu_edit");
         return modelAndView;
     }
 

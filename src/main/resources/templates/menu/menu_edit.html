@@ -51,7 +51,7 @@
 
             $.get("http://" + url + "/api/all", function (data, status) {
                 let result = data;
-
+                tmpArr = result;
                 for (let i = 0; i < result.length; i++) {
                     menu.push(result[i]);
                     printCard(result[i],result[i].categoryName);
@@ -84,15 +84,20 @@
             });
         }
 
+
+        let tmpArr;
+
         function printCard(result,name) {
 
             for (let i = 0; i < result.details.length; i++) {
-                console.log(name)
 
-                let idToUse = result.details[i].detailName.split(" ").join("")
+
+
+                let idToUse = result.details[i].detailName.split(" ").join("");
+                let picName = result.details[i].id+ "," +result.details[i].detailName;
 
                 let card = '<div class="card " id="' + result.categoryName.split(" ").join("_") + '" style="width: 12rem;">\n' +
-                    '  <img class="card-img-top" src="/img/tuna.jpg" alt="Card image cap">\n' +
+                    '  <img class="card-img-top" src="'+(result.details[i].picture == null  ? '/img/tuna.jpg' : result.details[i].picture ) +'" alt="Card image cap">\n' +
                     '  <div class="card-body">\n' +
                     '    <h5 class="card-title">' + result.details[i].detailName + '</h5>\n' +
 
@@ -122,7 +127,15 @@
 
 
                     '      <div class="modal-body">\n' +
-                    '        ...\n' +
+                    '        <p>Категория: <input type="text" name="categoryName" value="'+result.categoryName +'"/></p>\n' +
+                    '        <p>Име на Продукта: <input type="text" name="productName" value="'+result.details[i].detailName +'"/></p>\n' +
+                    '        <p>Под Категория: <input type="text" name="groupName" value="'+result.productName +'"/></p>\n' +
+                    '        <p>Грамаж: <input type="text" name="grams" size="5" value="'+result.details[i].grams +'"/></p>\n' +
+
+                    '        <p>Цена: <input type="number" name="price" value="'+result.details[i].price+'" size="5" step="0.01"/></p>\n' +
+                    '        <p>Грамаж малка: <input type="text" name="smallGrams" value="'+result.details[i].smallGrams+'"  size="5" /></p>\n' +
+                    '        <p>Цена малка: <input type="number" name="smallPrice" value="'+result.details[i].smallPrice+'" size="5" step="0.01"/></p>\n' +
+                    '        <p>Алергени : <input type="text" name="allergens" value="'+result.allergens.join().allergens +'""/></p>' +
                     '      </div>\n' +
 
 
@@ -134,7 +147,7 @@
 
                     '        <label for="up_'+ idToUse +'" class="btn btn-primary" >Избери Снимка</label>\n' +
                     '        <input id="up_'+idToUse+'" class="btn btn-primary" type="file" name="file" style="display: none" class="file-input" required />\n' +
-                    '        <button  class="btn btn-primary " onclick=" uploadFile(document.querySelector(\'#up_'+idToUse+'\').files[0])" >Добави</button>\n' +
+                    '        <button  class="btn btn-primary " onclick=" uploadFile(document.querySelector(\'#up_'+idToUse+'\').files[0],\''+picName+'\')" >Добави</button>\n' +
 
                             // todo add response on xrf status
                     '       <div class="upload-response">\n' +
@@ -186,6 +199,17 @@
             }
 
 
+        function updateProduct(result) {
+
+            console.log(result)
+            $.post("http://" + url + "/api/update", function (data, status) {
+                let result = data;
+
+
+
+
+            });
+        }
 
 
 
@@ -195,9 +219,13 @@
     </script>
 
         <script >
-            function uploadFile(file) {
+            function uploadFile(file,resp) {
+
+
                 var formData = new FormData();
                 formData.append("file", file);
+                formData.append("product", resp);
+                console.log(formData)
 
                 var xhr = new XMLHttpRequest();
                 xhr.open("POST", "/uploadFile");
@@ -215,7 +243,7 @@
                         // singleFileUploadSuccess.style.display = "none";
                         // singleFileUploadError.innerHTML = (response && response.message) || "Some Error Occurred";
                     }
-                }
+                };
 
                 xhr.send(formData);
             }
@@ -232,7 +260,7 @@
             // }, true);
         </script>
 
-<!--        <script src="/js/main.js" ></script>-->
+
 </div>
 </body>
 </html>

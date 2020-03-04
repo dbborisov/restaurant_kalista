@@ -2,9 +2,10 @@ package bg.kalista.web.service.service.impl;
 
 import bg.kalista.web.app.model.MenuModel;
 import bg.kalista.web.app.model.ProductModel;
-import bg.kalista.web.data.entity.Allergens;
-import bg.kalista.web.data.entity.Details;
-import bg.kalista.web.data.entity.Product;
+import bg.kalista.web.data.entity.menu.Allergens;
+import bg.kalista.web.data.entity.menu.Details;
+import bg.kalista.web.data.entity.menu.Product;
+import bg.kalista.web.data.repository.DetailsRepository;
 import bg.kalista.web.data.repository.ProductRepository;
 import bg.kalista.web.service.service.ProductService;
 import org.modelmapper.ModelMapper;
@@ -18,10 +19,12 @@ import java.util.stream.Collectors;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
+    private final DetailsRepository detailsRepository;
     private final ModelMapper modelMapper;
 
-    public ProductServiceImpl(ProductRepository productRepository, ModelMapper modelMapper) {
+    public ProductServiceImpl(ProductRepository productRepository, DetailsRepository detailsRepository, ModelMapper modelMapper) {
         this.productRepository = productRepository;
+        this.detailsRepository = detailsRepository;
         this.modelMapper = modelMapper;
     }
 
@@ -83,5 +86,12 @@ public class ProductServiceImpl implements ProductService {
         return  this.productRepository.findByCategoryName(group).stream().map(e -> modelMapper.map(e, ProductModel.class)).collect(Collectors.toList());
     }
 
-
+    @Override
+    public Product findByNameFromDetails(Long id, String name,String fileName) {
+        Details byDetailNameAndId = this.detailsRepository.findByDetailNameAndId( name,id);
+        byDetailNameAndId.setPicture(fileName);
+        Product product = byDetailNameAndId.getProduct();
+        this.detailsRepository.save(byDetailNameAndId);
+        return null;
+    }
 }

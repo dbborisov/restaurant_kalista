@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <title>Добави в менюто</title>
+    <th:block th:include="fragments/header"/>
+</head>
+
+<body>
+<th:block th:include="fragments/nav"/>
+<div class="container">
+
+    <div class="menu-tab">
+
+        <div class="row">
+            <div class="col-3">
+                <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+
+
+
+
+                </div>
+            </div>
+
+
+            <div class="col-9">
+                <div class="tab-content" id="v-pills-tabContent">
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- /.container -->
+    <th:block th:include="fragments/footer"/>
+
+    <script>
+
+        const unique = (value, index, self) => {
+            return self.indexOf(value) === index
+        };
+
+        let menu = [];
+        let uniqueCategories = [];
+
+        function getAll() {
+            let selected = document.querySelector("#card_view");
+            // let valSelected = selected.options[selected.selectedIndex].value;
+            const url = window.location.host;
+            let temp = [];
+
+
+            $.get("http://" + url + "/api/all", function (data, status) {
+                let result = data;
+
+                for (let i = 0; i < result.length; i++) {
+                    // console.log(result[i]);
+
+
+                    menu.push(result[i]);
+                    printCard(result[i],result[i].categoryName);
+                }
+
+
+            });
+
+        }
+
+
+        function getMenuGroups() {
+            let selected = document.querySelector("#card_view");
+            let temp = [];
+            // let valSelected = selected.options[selected.selectedIndex].value;
+            const url = window.location.host;
+
+
+            $.get("http://" + url + "/api/all/", function (data, status) {
+                let result = data;
+
+                for (let i = 0; i < result.length; i++) {
+                    // console.log(result[i].categoryName);
+                    temp.push(result[i].categoryName);
+
+                }
+                uniqueCategories = temp.filter(unique);
+                nav_draw();
+                getAll();
+            });
+        }
+
+        function printCard(result,name) {
+
+
+            for (let i = 0; i < result.details.length; i++) {
+
+
+                let card = '<div class="card " id="' + result.categoryName.split(" ").join("_") + '" style="width: 12rem;">\n' +
+                   ' <img class="card-img-top" src="'+(result.details[i].picture == null  ? '/img/tuna.jpg' : result.details[i].picture ) +'" alt="Card image cap">\n' +
+                    '  <div class="card-body">\n' +
+                    '    <h5 class="card-title">' + result.details[i].detailName + '</h5>\n' +
+
+                    (result.details[i].price && result.details[i].smallPrice ?
+                        '<p class="card-text">Цена голяма/малка: ' + result.details[0].price + ' / ' + result.details[i].smallPrice + ' лв.' + '</p>\n' :
+                        '<p class="card-text">Цена: ' + result.details[i].price + ' лв.' + '</p>\n')
+                    +
+
+                    '  </div>\n' +
+ +
+                    '  <div class="card-body">\n' +
+                    // '    <a href="#" class="card-link">Card link</a>\n' +
+                    // '    <a href="#" class="card-link">Another link</a>\n' +
+                    '  </div>\n' +
+                    '</div>';
+                if(result.specificationName){
+                    // console.log(result.specificationName)
+                    let specification = document.getElementById('nav-tab-'+name.split(' ').join('_'));
+                    let navLink = document.getElementById("nav-"+result.specificationName.split(' ').join('_')+"-tab")
+                    // '    <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Home</a>\n' +
+
+                    // '                    <div class="tab-content" id="nav-tab'+temp.split(' ').join('_')+'">\n' +
+
+
+                    if(navLink){
+                        document.getElementById("card-content-"+result.specificationName.split(' ').join('_')).innerHTML+=card;
+                    }else{
+                        let newNav = '    <a class="nav-item nav-link " id="'+'nav-'+result.specificationName.split(' ').join('_')+'-tab" data-toggle="tab" href="#nav-'+result.specificationName.split(' ').join('_')+'" role="tab" aria-controls="nav-home" aria-selected="false">'+result.specificationName.split(' ').join('_')+'</a>\n';
+
+                        let newContent = '  <div class="tab-pane fade" id="nav-'+result.specificationName.split(' ').join('_')+'" role="tabpanel" aria-labelledby="nav-'+result.specificationName.split(' ').join('_')+'-tab">' +
+                            '<div class="row" id="card-content-'+result.specificationName.split(' ').join('_')+'"> ' +
+                            '</div>' +
+                            '</div>\n';
+
+                        document.getElementById('nav-tab-'+name.split(' ').join('_')).innerHTML+=newNav;
+                        document.getElementById('nav-tab'+name.split(' ').join('_')).innerHTML+=newContent;
+                        document.getElementById("card-content-"+result.specificationName.split(' ').join('_')).innerHTML+=card;
+                    }
+
+                }else {
+
+                    document.getElementById("card_" + name.split(' ').join('_')).innerHTML += card;
+                }
+            }
+        }
+
+
+        function categoryUnderGroup() {
+
+            let table = '<nav>\n' +
+                '  <div class="nav nav-tabs" id="nav-tab" role="tablist">\n' +
+                '    <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Home</a>\n' +
+                '    <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Profile</a>\n' +
+                '    <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false">Contact</a>\n' +
+                '  </div>\n' +
+                '</nav>\n' +
+                '<div class="tab-content" id="nav-tabContent">\n' +
+                '  <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">...</div>\n' +
+                '  <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">...</div>\n' +
+                '  <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">...</div>\n' +
+                '</div>'
+
+        }
+
+
+        function nav_draw() {
+
+            let hed = '';
+            let cont = '';
+
+            for (let i = 0; i < uniqueCategories.length; i++) {
+                let temp = uniqueCategories[i];
+
+
+                hed+=
+                ' <a class="nav-link'+ (i===0?' active show':'')+'" id="v-pills-'+temp.split(' ').join('_')+'-tab" data-toggle="pill" href="#v-pills-'+temp.split(' ').join('_')+'" role="tab"\n' +
+                '                       aria-controls="v-pills-'+temp.split(' ').join('_')+'"'+ (i===0?' aria-selected="true"':'aria-selected="false"')+' >'+temp+'</a>';
+
+                cont+=
+                    '   <div class="tab-pane fade '+ (i===0?' active show':'')+'" id="v-pills-'+temp.split(' ').join('_')+'" role="tabpanel"\n' +
+                    '                         aria-labelledby="v-pills-'+temp.split(' ').join('_')+'-tab">\n' +
+                    // ' <!--                  secondary main navigation-->\n' +
+                    '                    <nav>\n' +
+                    '                        <div class="nav nav-tabs" id="nav-tab-'+temp.split(' ').join('_')+'" role="tablist">\n' +
+                    '\n' +
+                    '                        </div>\n' +
+                    '                    </nav>\n' +
+                    '\n' +
+                    '\n' +
+                    // '<!--                    additional navigation tab-->\n' +
+                    '                    <div class="tab-content " id="nav-tab'+temp.split(' ').join('_')+'">\n' +
+                    '\n' +         ' <div id="card_'+temp.split(' ').join('_')+'" class="row">\n' +
+
+
+
+
+                    '                        </div>' +
+                    '                    </div>' +
+
+                    '                    </div>'
+
+            }
+            document.querySelector("#v-pills-tab").innerHTML=hed;
+            document.querySelector("#v-pills-tabContent").innerHTML = cont;
+            }
+
+
+
+
+
+
+        getMenuGroups();
+    </script>
+</div>
+</body>
+</html>

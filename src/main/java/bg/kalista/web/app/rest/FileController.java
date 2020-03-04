@@ -1,6 +1,7 @@
 package bg.kalista.web.app.rest;
 
 import bg.kalista.web.payload.UploadFileResponse;
+import bg.kalista.web.service.service.ProductService;
 import bg.kalista.web.service.service.impl.FileStorageService;
 
 import org.slf4j.Logger;
@@ -12,9 +13,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -25,11 +28,20 @@ public class FileController {
 
     private static final Logger logger = LoggerFactory.getLogger(FileController.class);
 
+
+    private final FileStorageService fileStorageService;
+    private final ProductService productService;
+
     @Autowired
-    private FileStorageService fileStorageService;
+    public FileController(FileStorageService fileStorageService, ProductService productService) {
+        this.fileStorageService = fileStorageService;
+        this.productService = productService;
+    }
 
     @PostMapping("/uploadFile")
-    public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file) {
+    public UploadFileResponse uploadFile(@RequestParam("product") String update,@RequestParam("file") MultipartFile file) {
+
+
         String fileName = fileStorageService.storeFile(file);
 
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
@@ -37,16 +49,33 @@ public class FileController {
                 .path(fileName)
                 .toUriString();
 
+        if(!update.trim().equals("") && update != null){
+            String[] split = update.split(",");
+            this.productService.findByNameFromDetails(Long.parseLong(split[0]), split[1],"/img/uploads/"+fileName);
+            Resource resource = fileStorageService.loadFileAsResource(fileName);
+
+            try {
+                String path = new File(".").getCanonicalPath();
+                System.out.println(path);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+
         return new UploadFileResponse(fileName, fileDownloadUri,
                 file.getContentType(), file.getSize());
     }
 
+
     @PostMapping("/uploadMultipleFiles")
     public List<UploadFileResponse> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files) {
-        System.out.println();
-        return Arrays.asList(files)
+
+        return
+                Arrays.asList(files)
                 .stream()
-                .map(file -> uploadFile(file))
+                .map(file -> uploadFile("",file))
                 .collect(Collectors.toList());
     }
 
@@ -72,6 +101,12 @@ public class FileController {
                 .contentType(MediaType.parseMediaType(contentType))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
                 .body(resource);
+    }
+
+    @RequestMapping(value = "/test", method = RequestMethod.GET)
+    public ModelAndView index() {
+
+        return new    ModelAndView("test");
     }
 
 }

@@ -1,7 +1,5 @@
 package bg.kalista.web.app.model;
 
-import bg.kalista.web.data.entity.Allergens;
-import bg.kalista.web.data.entity.Details;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

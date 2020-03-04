@@ -1,6 +1,5 @@
 package bg.kalista.web.app.model;
 
-import bg.kalista.web.data.entity.Product;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
